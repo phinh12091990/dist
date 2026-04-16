@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H&#432;&#7899;ng D&#7851;n AI Auto Deploy | Dokploy</title>
+<style>
+:root{--bg:#0a0a0f;--card:#111119;--border:#1c1c28;--accent:#6366f1;--accent2:#8b5cf6;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#3b82f6;--cyan:#06b6d4;--text:#e2e8f0;--muted:#94a3b8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;}
+.hero{background:linear-gradient(135deg,#0f172a,#1e1b4b 50%,#0f172a);padding:60px 32px 48px;text-align:center;border-bottom:1px solid var(--border);}
+.hero h1{font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:700px;margin:0 auto 20px;}
+.hero .badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
+.hero .badges span{background:rgba(99,102,241,.15);color:#a5b4fc;padding:6px 18px;border-radius:20px;font-size:.85rem;font-weight:600;border:1px solid rgba(99,102,241,.3);}
+
+.wrap{max-width:1100px;margin:0 auto;padding:40px 24px;}
+.sec{margin-bottom:48px;}
+h2{font-size:1.6rem;font-weight:700;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:10px;}
+h3{font-size:1.2rem;font-weight:700;margin:24px 0 12px;color:#a5b4fc;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:40px;}
+.toc h3{margin-top:0;color:#a5b4fc;}
+.toc ol{list-style:none;padding:0;counter-reset:toc-counter;}
+.toc ol li{counter-increment:toc-counter;padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.toc ol li:last-child{border-bottom:none;}
+.toc ol li::before{content:counter(toc-counter);background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;width:26px;height:26px;min-width:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;}
+.toc ol li a{color:var(--text);text-decoration:none;flex:1;font-size:.95rem;}
+.toc ol li a:hover{color:#a5b4fc;}
+
+/* Steps */
+.step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.step::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--accent2));}
+.step-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.step-num{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;width:44px;height:44px;min-width:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;box-shadow:0 4px 12px rgba(99,102,241,.3);}
+.step-title{font-size:1.25rem;font-weight:700;flex:1;}
+.step-time{background:rgba(34,197,94,.15);color:var(--green);padding:4px 12px;border-radius:12px;font-size:.75rem;font-weight:600;}
+
+.sub-step{display:flex;gap:12px;padding:10px 0;border-left:2px solid rgba(99,102,241,.2);padding-left:16px;margin-left:8px;margin-top:10px;}
+.sub-step-num{background:rgba(99,102,241,.15);color:#a5b4fc;width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;}
+.sub-step-content h4{font-size:.95rem;margin-bottom:4px;}
+.sub-step-content p{font-size:.85rem;color:var(--muted);line-height:1.55;}
+.sub-step-content code{background:rgba(99,102,241,.1);padding:1px 6px;border-radius:4px;font-size:.8rem;color:#c084fc;}
+
+.note{background:rgba(234,179,8,.08);border-left:3px solid var(--yellow);padding:12px 16px;border-radius:6px;margin:12px 0;font-size:.85rem;color:#fde68a;}
+.warning{background:rgba(239,68,68,.08);border-left:3px solid var(--red);padding:12px 16px;border-radius:6px;margin:12px 0;font-size:.85rem;color:#fca5a5;}
+.tip{background:rgba(34,197,94,.08);border-left:3px solid var(--green);padding:12px 16px;border-radius:6px;margin:12px 0;font-size:.85rem;color:#86efac;}
+
+/* Mindmap */
+.mindmap-wrapper{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto;}
+.mindmap{min-width:900px;}
+
+/* Flow diagram */
+.flow{display:flex;flex-direction:column;gap:8px;}
+.flow-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.flow-box{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);padding:10px 16px;border-radius:8px;font-size:.85rem;font-weight:500;}
+.flow-box.success{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.3);color:var(--green);}
+.flow-box.ai{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#c084fc;}
+.flow-box.user{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#60a5fa;}
+.flow-arrow{color:var(--muted);font-size:1.2rem;}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:12px 0;}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:.85rem;}
+th{background:rgba(99,102,241,.08);color:#a5b4fc;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:600;}
+.b-green{background:rgba(34,197,94,.15);color:var(--green);}
+.b-yellow{background:rgba(234,179,8,.15);color:var(--yellow);}
+.b-red{background:rgba(239,68,68,.15);color:var(--red);}
+.b-blue{background:rgba(59,130,246,.15);color:var(--blue);}
+.b-purple{background:rgba(139,92,246,.15);color:#c084fc;}
+
+.footer{text-align:center;padding:40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);}
+
+@media print{
+body{background:#fff;color:#1a1a1a;}
+.hero{background:#f1f5f9;}
+.hero h1 .ai,.hero h1{-webkit-text-fill-color:#4338ca;}
+.step,.toc,.mindmap-wrapper{background:#f8fafc;border-color:#e2e8f0;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>AI Auto Deploy</h1>
+<p>H&#432;&#7899;ng d&#7851;n chi ti&#7871;t t&#7915;ng b&#432;&#7899;c deploy &#7913;ng d&#7909;ng t&#7915; GitHub v&#7899;i Dokploy + AI</p>
+<div class="badges">
+<span>32 Phases</span>
+<span>6 B&#432;&#7899;c tri&#7875;n khai</span>
+<span>~5 ph&#250;t</span>
+<span>Ti&#7871;ng Vi&#7879;t</span>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- TOC -->
+<div class="toc">
+<h3>&#128203; M&#7909;c l&#7909;c</h3>
+<ol>
+<li><a href="#mindmap">S&#417; &#273;&#7891; Mindmap t&#7893;ng quan</a></li>
+<li><a href="#overview">T&#7893;ng quan lu&#7891;ng ho&#7841;t &#273;&#7897;ng</a></li>
+<li><a href="#step1">B&#432;&#7899;c 1: Chu&#7849;n b&#7883; tr&#432;&#7899;c khi deploy</a></li>
+<li><a href="#step2">B&#432;&#7899;c 2: M&#7903; AI Auto Deploy Wizard</a></li>
+<li><a href="#step3">B&#432;&#7899;c 3: Ch&#7885;n repository &amp; Domain</a></li>
+<li><a href="#step4">B&#432;&#7899;c 4: Ph&#226;n t&#237;ch Repository (AI)</a></li>
+<li><a href="#step5">B&#432;&#7899;c 5: Xem k&#7871;t qu&#7843; &amp; t&#249;y ch&#7881;nh</a></li>
+<li><a href="#step6">B&#432;&#7899;c 6: Deploy &amp; theo d&#245;i</a></li>
+<li><a href="#troubleshoot">X&#7917; l&#253; l&#7895;i th&#432;&#7901;ng g&#7863;p</a></li>
+<li><a href="#checklist">Checklist tr&#432;&#7899;c khi deploy</a></li>
+</ol>
+</div>
+
+<!-- MINDMAP -->
+<div class="sec" id="mindmap">
+<h2>&#127760; S&#417; &#273;&#7891; Mindmap t&#7893;ng quan</h2>
+<div class="mindmap-wrapper">
+<svg class="mindmap" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg">
+<!-- Center node -->
+<g>
+<rect x="450" y="320" width="200" height="60" rx="30" fill="url(#centerGrad)" stroke="#a5b4fc" stroke-width="2"/>
+<text x="550" y="345" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">AI Auto Deploy</text>
+<text x="550" y="365" text-anchor="middle" fill="#e0e7ff" font-size="11">Dokploy + AI</text>
+</g>
+
+<!-- Gradients -->
+<defs>
+<linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#6366f1"/>
+<stop offset="100%" style="stop-color:#8b5cf6"/>
+</linearGradient>
+<linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#3b82f6" stop-opacity=".3"/>
+<stop offset="100%" style="stop-color:#3b82f6" stop-opacity=".15"/>
+</linearGradient>
+<linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#22c55e" stop-opacity=".3"/>
+<stop offset="100%" style="stop-color:#22c55e" stop-opacity=".15"/>
+</linearGradient>
+<linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#eab308" stop-opacity=".3"/>
+<stop offset="100%" style="stop-color:#eab308" stop-opacity=".15"/>
+</linearGradient>
+<linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6" stop-opacity=".3"/>
+<stop offset="100%" style="stop-color:#8b5cf6" stop-opacity=".15"/>
+</linearGradient>
+<linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#06b6d4" stop-opacity=".3"/>
+<stop offset="100%" style="stop-color:#06b6d4" stop-opacity=".15"/>
+</linearGradient>
+</defs>
+
+<!-- Branch 1: Input (top-left) -->
+<g>
+<path d="M 450 340 Q 300 280 180 200" stroke="#3b82f6" stroke-width="2" fill="none"/>
+<rect x="50" y="170" width="260" height="60" rx="10" fill="url(#blueGrad)" stroke="#60a5fa"/>
+<text x="180" y="195" text-anchor="middle" fill="#60a5fa" font-weight="700" font-size="14">&#128200; 1. &#272;&#7847;u v&#224;o</text>
+<text x="180" y="215" text-anchor="middle" fill="#e2e8f0" font-size="11">GitHub URL + Domain g&#7889;c</text>
+</g>
+
+<!-- Branch 2: Analysis (top) -->
+<g>
+<path d="M 550 320 Q 550 230 550 160" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+<rect x="400" y="100" width="300" height="70" rx="10" fill="url(#purpleGrad)" stroke="#c084fc"/>
+<text x="550" y="125" text-anchor="middle" fill="#c084fc" font-weight="700" font-size="14">&#129504; 2. Ph&#226;n t&#237;ch AI</text>
+<text x="550" y="145" text-anchor="middle" fill="#e2e8f0" font-size="11">Stack + Strategy + Services</text>
+<text x="550" y="160" text-anchor="middle" fill="#94a3b8" font-size="10">Parse env, compose, README</text>
+</g>
+
+<!-- Branch 3: Smart config (top-right) -->
+<g>
+<path d="M 650 340 Q 800 280 920 200" stroke="#06b6d4" stroke-width="2" fill="none"/>
+<rect x="790" y="170" width="260" height="60" rx="10" fill="url(#cyanGrad)" stroke="#22d3ee"/>
+<text x="920" y="195" text-anchor="middle" fill="#22d3ee" font-weight="700" font-size="14">&#9881;&#65039; 3. Smart Config</text>
+<text x="920" y="215" text-anchor="middle" fill="#e2e8f0" font-size="11">Env auto-fill, healthcheck</text>
+</g>
+
+<!-- Branch 4: Review (middle-right) -->
+<g>
+<path d="M 650 380 Q 800 420 920 440" stroke="#eab308" stroke-width="2" fill="none"/>
+<rect x="790" y="410" width="260" height="60" rx="10" fill="url(#yellowGrad)" stroke="#facc15"/>
+<text x="920" y="435" text-anchor="middle" fill="#facc15" font-weight="700" font-size="14">&#128065;&#65039; 4. Xem v&#224; s&#7917;a</text>
+<text x="920" y="455" text-anchor="middle" fill="#e2e8f0" font-size="11">User review compose, env</text>
+</g>
+
+<!-- Branch 5: Deploy (bottom) -->
+<g>
+<path d="M 550 380 Q 550 470 550 540" stroke="#22c55e" stroke-width="2" fill="none"/>
+<rect x="400" y="530" width="300" height="70" rx="10" fill="url(#greenGrad)" stroke="#4ade80"/>
+<text x="550" y="555" text-anchor="middle" fill="#4ade80" font-weight="700" font-size="14">&#128640; 5. Deploy</text>
+<text x="550" y="575" text-anchor="middle" fill="#e2e8f0" font-size="11">Docker Compose Build + Run</text>
+<text x="550" y="590" text-anchor="middle" fill="#94a3b8" font-size="10">Traefik routing + SSL auto</text>
+</g>
+
+<!-- Branch 6: Monitor (bottom-left) -->
+<g>
+<path d="M 450 380 Q 300 420 180 440" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+<rect x="50" y="410" width="260" height="60" rx="10" fill="url(#purpleGrad)" stroke="#a78bfa"/>
+<text x="180" y="435" text-anchor="middle" fill="#c084fc" font-weight="700" font-size="14">&#128065;&#65039; 6. Gi&#225;m s&#225;t</text>
+<text x="180" y="455" text-anchor="middle" fill="#e2e8f0" font-size="11">Logs + AI Diagnosis</text>
+</g>
+
+<!-- Sub-branches from Input -->
+<g font-size="10">
+<path d="M 180 230 Q 100 270 60 310" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="60" y="325" fill="#94a3b8">&#128279; GitHub URL</text>
+<path d="M 180 230 Q 180 270 180 310" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="180" y="325" text-anchor="middle" fill="#94a3b8">&#128065; Provider</text>
+<path d="M 180 230 Q 260 270 310 310" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="310" y="325" text-anchor="end" fill="#94a3b8">&#127760; Domain</text>
+</g>
+
+<!-- Sub-branches from Smart Config -->
+<g font-size="10">
+<path d="M 920 230 Q 850 260 820 290" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="820" y="305" text-anchor="end" fill="#94a3b8">&#128274; Secrets</text>
+<path d="M 920 230 Q 920 270 920 300" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="920" y="315" text-anchor="middle" fill="#94a3b8">&#128268; DB Sync</text>
+<path d="M 920 230 Q 990 270 1020 300" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="1020" y="315" text-anchor="end" fill="#94a3b8">&#128154; Healthcheck</text>
+</g>
+
+<!-- Sub-branches from Deploy -->
+<g font-size="10">
+<path d="M 550 600 Q 400 640 280 660" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="280" y="675" text-anchor="end" fill="#94a3b8">&#128190; Pull images</text>
+<path d="M 550 600 Q 550 640 550 660" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="550" y="675" text-anchor="middle" fill="#94a3b8">&#128288; Start containers</text>
+<path d="M 550 600 Q 700 640 820 660" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,2" fill="none"/>
+<text x="820" y="675" text-anchor="start" fill="#94a3b8">&#127760; Traefik domain</text>
+</g>
+
+</svg>
+</div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="sec" id="overview">
+<h2>&#9889; T&#7893;ng quan lu&#7891;ng ho&#7841;t &#273;&#7897;ng</h2>
+<div class="flow">
+<div class="flow-row">
+<div class="flow-box user">&#128100; User: Paste URL</div>
+<span class="flow-arrow">&rarr;</span>
+<div class="flow-box ai">&#129504; AI Ph&#226;n t&#237;ch</div>
+<span class="flow-arrow">&rarr;</span>
+<div class="flow-box ai">&#9881;&#65039; Smart Config</div>
+<span class="flow-arrow">&rarr;</span>
+<div class="flow-box user">&#128065; Review</div>
+<span class="flow-arrow">&rarr;</span>
+<div class="flow-box user">&#128077; Confirm</div>
+<span class="flow-arrow">&rarr;</span>
+<div class="flow-box success">&#128640; Deploy</div>
+</div>
+</div>
+<div class="tip">
+<strong>M&#7909;c ti&#234;u:</strong> T&#7915; l&#250;c nh&#7853;p URL &#273;&#7871;n l&#250;c app ch&#7841;y = <strong>~3-5 ph&#250;t</strong>. Kh&#225;ch h&#224;ng ch&#7881; c&#7847;n 3 click, AI x&#7917; l&#253; ph&#7847;n k&#7929; thu&#7853;t.
+</div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step" id="step1">
+<div class="step-header">
+<div class="step-num">1</div>
+<div class="step-title">Chu&#7849;n b&#7883; tr&#432;&#7899;c khi deploy</div>
+<div class="step-time">~2 ph&#250;t</div>
+</div>
+
+<h3>&#128203; C&#225;c th&#244;ng tin c&#7847;n c&#243; s&#7861;n</h3>
+
+<div class="sub-step">
+<div class="sub-step-num">a</div>
+<div class="sub-step-content">
+<h4>Link GitHub repository</h4>
+<p>Copy URL c&#7911;a repo c&#7847;n deploy. V&#237; d&#7909;: <code>https://github.com/username/my-app</code>. Repo c&#243; th&#7875; l&#224; public (kh&#244;ng c&#7847;n auth) ho&#7863;c private (c&#7847;n k&#7871;t n&#7889;i GitHub App tr&#432;&#7899;c).</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">b</div>
+<div class="sub-step-content">
+<h4>Domain (t&#249;y ch&#7885;n ho&#7863;c t&#7841;o t&#7921; &#273;&#7897;ng)</h4>
+<p>N&#7871;u c&#243; domain ri&#234;ng: nh&#7853;p v&#224;o. N&#7871;u kh&#244;ng: b&#7845;m n&#250;t <strong>"T&#7841;o t&#7921; &#273;&#7897;ng"</strong> &rarr; h&#7879; th&#7889;ng t&#7841;o subdomain mi&#7877;n ph&#237; d&#7841;ng <code>{t&#234;n-app}-{hash}.matbaohosting.com</code></p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">c</div>
+<div class="sub-step-content">
+<h4>Ch&#7885;n d&#7921; &#225;n &amp; m&#244;i tr&#432;&#7901;ng</h4>
+<p>V&#224;o <strong>D&#7921; &#225;n</strong> &rarr; ch&#7885;n project mu&#7889;n deploy &rarr; ch&#7885;n m&#244;i tr&#432;&#7901;ng (th&#432;&#7901;ng l&#224; <code>production</code>).</p>
+</div>
+</div>
+
+<div class="note">
+<strong>L&#432;u &#253;:</strong> N&#7871;u repo l&#224; <strong>private</strong>, c&#7847;n k&#7871;t n&#7889;i GitHub App tr&#432;&#7899;c &#7903; <strong>C&#224;i &#273;&#7863;t &rarr; Git &rarr; GitHub</strong>.
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="step2">
+<div class="step-header">
+<div class="step-num">2</div>
+<div class="step-title">M&#7903; AI Auto Deploy Wizard</div>
+<div class="step-time">~10 gi&#226;y</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">a</div>
+<div class="sub-step-content">
+<h4>V&#224;o trang project</h4>
+<p>Dashboard &rarr; D&#7921; &#225;n &rarr; click v&#224;o project &rarr; ch&#7885;n m&#244;i tr&#432;&#7901;ng.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">b</div>
+<div class="sub-step-content">
+<h4>B&#7845;m n&#250;t "AI Auto Deploy"</h4>
+<p>Ngay &#7903; trang m&#244;i tr&#432;&#7901;ng, t&#236;m n&#250;t <strong>&#129302; AI Auto Deploy</strong> (th&#432;&#7901;ng &#7903; d&#7841;ng n&#250;t m&#224;u t&#237;m).</p>
+</div>
+</div>
+
+<div class="tip">
+<strong>Wizard s&#7869; m&#7903; ra</strong> v&#7899;i 3 b&#432;&#7899;c: <strong>Nh&#7853;p &#273;&#7847;u v&#224;o</strong> &rarr; <strong>Xem ph&#226;n t&#237;ch</strong> &rarr; <strong>Ho&#224;n t&#7845;t</strong>.
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="step3">
+<div class="step-header">
+<div class="step-num">3</div>
+<div class="step-title">Ch&#7885;n repository &amp; Domain (Step 1/3)</div>
+<div class="step-time">~30 gi&#226;y</div>
+</div>
+
+<h3>2 ch&#7871; &#273;&#7897; nh&#7853;p repo</h3>
+
+<div class="sub-step">
+<div class="sub-step-num">a</div>
+<div class="sub-step-content">
+<h4>Tab "T&#224;i kho&#7843;n GitHub" (&#273;&#227; k&#7871;t n&#7889;i)</h4>
+<p>Ch&#7885;n t&#224;i kho&#7843;n GitHub &rarr; ch&#7885;n repository &rarr; ch&#7885;n branch. H&#7895; tr&#7907; private repos.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">b</div>
+<div class="sub-step-content">
+<h4>Tab "D&#225;n link GitHub" (public repos)</h4>
+<p>Paste URL v&#224;o &#244; input, v&#237; d&#7909;: <code>https://github.com/requarks/wiki</code>. Kh&#244;ng c&#7847;n k&#7871;t n&#7889;i GitHub App tr&#432;&#7899;c.</p>
+</div>
+</div>
+
+<h3>Nh&#7853;p Domain g&#7889;c (b&#7855;t bu&#7897;c)</h3>
+
+<div class="sub-step">
+<div class="sub-step-num">c</div>
+<div class="sub-step-content">
+<h4>2 l&#7921;a ch&#7885;n</h4>
+<p><strong>C&#225;ch 1:</strong> Nh&#7853;p domain c&#243; s&#7861;n (v&#237; d&#7909;: <code>my-company.com</code>) &rarr; AI g&#7907;i &#253; subdomain <code>app.my-company.com</code>.</p>
+<p><strong>C&#225;ch 2:</strong> B&#7845;m n&#250;t <strong>"&#9889; T&#7841;o t&#7921; &#273;&#7897;ng"</strong> &rarr; t&#7841;o subdomain mi&#7877;n ph&#237; d&#7841;ng <code>{t&#234;n-repo}-{6-k&#253;-t&#7921;}.matbaohosting.com</code>.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">d</div>
+<div class="sub-step-content">
+<h4>B&#7845;m "Ph&#226;n t&#237;ch Repository"</h4>
+<p>N&#250;t n&#224;y s&#7869; k&#237;ch ho&#7841;t AI Analysis (b&#432;&#7899;c ti&#7871;p theo).</p>
+</div>
+</div>
+
+<div class="warning">
+<strong>Ch&#250; &#253;:</strong> N&#7871;u domain tr&#7889;ng, n&#250;t s&#7869; b&#7883; <strong>disabled</strong>. Ph&#7843;i nh&#7853;p ho&#7863;c b&#7845;m "T&#7841;o t&#7921; &#273;&#7897;ng" tr&#432;&#7899;c.
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="step4">
+<div class="step-header">
+<div class="step-num">4</div>
+<div class="step-title">Ph&#226;n t&#237;ch Repository (AI l&#224;m vi&#7879;c)</div>
+<div class="step-time">~10-30 gi&#226;y</div>
+</div>
+
+<h3>AI th&#7921;c hi&#7879;n c&#225;c vi&#7879;c sau</h3>
+
+<table>
+<thead><tr><th>B&#432;&#7899;c</th><th>Ho&#7841;t &#273;&#7897;ng</th><th>K&#7871;t qu&#7843;</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Fetch files t&#7915; GitHub</td><td>T&#7843;i v&#7873; <code>Dockerfile</code>, <code>docker-compose.yml</code>, <code>.env</code>, <code>README.md</code>, <code>package.json</code>...</td></tr>
+<tr><td>2</td><td>Detect stack</td><td>Nh&#7853;n di&#7879;n Node.js / Python / Go / Java / PHP / Ruby / .NET...</td></tr>
+<tr><td>3</td><td>Ch&#7885;n chi&#7871;n l&#432;&#7907;c</td><td><code>compose</code> &gt; <code>dockerfile</code> &gt; <code>nixpacks</code> (&#432;u ti&#234;n compose)</td></tr>
+<tr><td>4</td><td>Parse env vars</td><td>T&#7915; <code>.env</code>, <code>.env.example</code>, compose <code>${VAR}</code>, README</td></tr>
+<tr><td>5</td><td>Detect well-known</td><td>Wiki.js, Ghost, n8n... &rarr; g&#7907;i &#253; Docker image ch&#237;nh th&#7913;c</td></tr>
+<tr><td>6</td><td>Sanitize compose</td><td>8 b&#432;&#7899;c: x&#243;a nginx, convert ports, inject healthcheck, DB sync...</td></tr>
+<tr><td>7</td><td>Gi&#7843;i th&#237;ch (AI)</td><td>Output ti&#7871;ng Vi&#7879;t v&#7873; architecture, services, l&#432;u &#253;</td></tr>
+</tbody>
+</table>
+
+<div class="tip">
+<strong>T&#7845;t c&#7843; &#273;&#7873;u deterministic:</strong> AI ch&#7881; vi&#7871;t text gi&#7843;i th&#237;ch. C&#225;c quy&#7871;t &#273;&#7883;nh (strategy, config, ports) &#273;&#7873;u t&#7915; code analysis &rarr; an to&#224;n, reproducible.
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" id="step5">
+<div class="step-header">
+<div class="step-num">5</div>
+<div class="step-title">Xem k&#7871;t qu&#7843; &amp; t&#249;y ch&#7881;nh (Step 2/3)</div>
+<div class="step-time">~1-2 ph&#250;t</div>
+</div>
+
+<h3>C&#225;c th&#224;nh ph&#7847;n hi&#7875;n th&#7883;</h3>
+
+<div class="sub-step">
+<div class="sub-step-num">a</div>
+<div class="sub-step-content">
+<h4>K&#7871;t qu&#7843; ph&#226;n t&#237;ch (4 sections)</h4>
+<p><strong>&#128200; T&#7893;ng quan</strong> &rarr; <strong>&#128295; Services</strong> &rarr; <strong>&#9881; C&#7845;u h&#236;nh t&#7921; &#273;&#7897;ng</strong> &rarr; <strong>&#9888; L&#432;u &#253;</strong></p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">b</div>
+<div class="sub-step-content">
+<h4>Badges hi&#7875;n th&#7883;</h4>
+<p>Stack detected (v&#237; d&#7909;: <code>Node.js</code>), Strategy (<code>Docker Compose</code>), Well-known project (<code>&#10024; Wiki.js</code>).</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">c</div>
+<div class="sub-step-content">
+<h4>Docker Compose preview</h4>
+<p>Hi&#7875;n th&#7883; YAML &#273;&#227; sanitize. User c&#243; th&#7875; xem tr&#432;&#7899;c, kh&#244;ng th&#7875; ch&#7881;nh s&#7917;a tr&#234;n wizard.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">d</div>
+<div class="sub-step-content">
+<h4>N&#7871;u l&#224; Well-Known Project</h4>
+<p>Ch&#7885;n <strong>&#128230; Docker Image ch&#237;nh th&#7913;c</strong> (khuy&#7871;n ngh&#7883;) ho&#7863;c <strong>&#128296; Build t&#7915; source code</strong>. Ph&#7913;c t&#7841;p nh&#432; Wiki.js n&#234;n ch&#7885;n Docker image.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">e</div>
+<div class="sub-step-content">
+<h4>Domain Suggestions</h4>
+<p>AI gi&#7901; &#273;&#227; th&#244;ng minh h&#417;n: ch&#7881; &#273;&#7873; xu&#7845;t domain cho services th&#7921;c s&#7921; web-facing (b&#7887; qua DB, init containers, Selenium).</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">f</div>
+<div class="sub-step-content">
+<h4>B&#7845;m "Deploy ngay"</h4>
+<p>Ho&#7863;c "Quay l&#7841;i" n&#7871;u c&#7847;n s&#7917;a input.</p>
+</div>
+</div>
+
+<div class="note">
+<strong>Sau khi Deploy:</strong> N&#7871;u c&#243; env vars tr&#7889;ng (nh&#432; API keys b&#234;n th&#7913; 3), v&#224;o tab <strong>M&#244;i tr&#432;&#7901;ng</strong> &rarr; b&#7845;m <strong>&#129504; AI Smart Fill</strong> &#273;&#7875; AI g&#7907;i &#253;.
+</div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="step6">
+<div class="step-header">
+<div class="step-num">6</div>
+<div class="step-title">Deploy &amp; theo d&#245;i (Step 3/3)</div>
+<div class="step-time">~2-10 ph&#250;t (t&#249;y size)</div>
+</div>
+
+<h3>C&#225;c vi&#7879;c di&#7877;n ra</h3>
+
+<table>
+<thead><tr><th>Giai &#273;o&#7841;n</th><th>Ho&#7841;t &#273;&#7897;ng</th><th>Th&#7901;i gian</th></tr></thead>
+<tbody>
+<tr><td>1. Clone</td><td>Git clone repo v&#224;o server</td><td>~10-30s</td></tr>
+<tr><td>2. Build</td><td>Docker build image (n&#7871;u c&#7847;n build)</td><td>~1-5 min</td></tr>
+<tr><td>3. Pull</td><td>Pull pre-built images (MySQL, Redis...)</td><td>~30s-2min</td></tr>
+<tr><td>4. Start</td><td>Kh&#7903;i t&#7841;o containers theo <code>depends_on</code></td><td>~30s</td></tr>
+<tr><td>5. Healthcheck</td><td>Ch&#7901; DB s&#7861;n s&#224;ng (<code>service_healthy</code>)</td><td>~30s-1min</td></tr>
+<tr><td>6. Traefik</td><td>Attach container v&#224;o Traefik routing</td><td>~5s</td></tr>
+<tr><td>7. SSL</td><td>C&#7845;p Let's Encrypt cert (n&#7871;u b&#7853;t HTTPS)</td><td>~30s</td></tr>
+</tbody>
+</table>
+
+<h3>Theo d&#245;i deployment</h3>
+
+<div class="sub-step">
+<div class="sub-step-num">a</div>
+<div class="sub-step-content">
+<h4>Tab "Tri&#7875;n khai" (Deployments)</h4>
+<p>Xem l&#7883;ch s&#7917; deploy, click v&#224;o deployment &#273;&#7875; xem live logs.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">b</div>
+<div class="sub-step-content">
+<h4>Tab "Nh&#7853;t k&#253;" (Logs)</h4>
+<p>Xem container logs real-time. Ch&#7885;n container t&#7915; dropdown n&#7871;u c&#243; nhi&#7873;u services.</p>
+</div>
+</div>
+
+<div class="sub-step">
+<div class="sub-step-num">c</div>
+<div class="sub-step-content">
+<h4>Khi deploy fail</h4>
+<p>AI <strong>t&#7921; &#273;&#7897;ng chu&#7849;n &#273;o&#225;n</strong> (Phase 23). M&#7903; deployment lỗi &rarr; b&#7845;m <strong>&#129521; AI Ch&#7849;n &#272;o&#225;n</strong> &rarr; AI ph&#226;n lo&#7841;i l&#7895;i + g&#7907;i &#253; fix.</p>
+<p>N&#7871;u l&#7895;i &#273;&#417;n gi&#7843;n: b&#7845;m <strong>&#128296; AI Auto-Fix</strong> &rarr; "&#272;&#7891;ng &#253;" &rarr; AI s&#7917;a env vars &rarr; redeploy (t&#7889;i &#273;a 5 l&#7847;n).</p>
+</div>
+</div>
+
+<div class="tip">
+<strong>Owner</strong> c&#243; th&#7875; xem th&#7889;ng k&#234; t&#7915; <strong>Dashboard &rarr; Th&#7889;ng k&#234; AI Deploy</strong>: top l&#7895;i ph&#7893; bi&#7871;n, top stacks, top repos fail nhi&#7873;u.
+</div>
+</div>
+
+<!-- TROUBLESHOOT -->
+<div class="sec" id="troubleshoot">
+<h2>&#128680; X&#7917; l&#253; l&#7895;i th&#432;&#7901;ng g&#7863;p</h2>
+
+<table>
+<thead><tr><th>L&#7895;i</th><th>Nguy&#234;n nh&#226;n</th><th>C&#225;ch fix</th></tr></thead>
+<tbody>
+<tr>
+<td><span class="badge b-red">init-db exit 2</span></td>
+<td>Image image non-root + volume owner root</td>
+<td>&#272;&#227; auto-fix: <code>user: "0:0"</code> + <code>set -e</code></td>
+</tr>
+<tr>
+<td><span class="badge b-red">ENCRYPTION_KEY required</span></td>
+<td>AI kh&#244;ng generate secret cho env nh&#7841;y c&#7843;m</td>
+<td>B&#7845;m <strong>AI Smart Fill</strong> trong tab M&#244;i tr&#432;&#7901;ng</td>
+</tr>
+<tr>
+<td><span class="badge b-red">network not found</span></td>
+<td>Network stale t&#7915; deploy tr&#432;&#7899;c</td>
+<td>&#272;&#227; auto-fix: remove-then-create network</td>
+</tr>
+<tr>
+<td><span class="badge b-red">MYSQL_ROOT_PASSWORD missing</span></td>
+<td>Compose thi&#7871;u env b&#7855;t bu&#7897;c cho DB</td>
+<td>&#272;&#227; auto-fix: Phase 19 DB auto-fill</td>
+</tr>
+<tr>
+<td><span class="badge b-yellow">API key r&#7895;ng</span></td>
+<td>External credentials (ANTHROPIC_API_KEY...)</td>
+<td>User ph&#7843;i t&#7921; nh&#7853;p t&#7915; nh&#224; cung c&#7845;p</td>
+</tr>
+<tr>
+<td><span class="badge b-yellow">Build Wiki.js fail</span></td>
+<td>Wiki.js monorepo ph&#7913;c t&#7841;p</td>
+<td>Ch&#7885;n <strong>Docker Image ch&#237;nh th&#7913;c</strong> thay v&#236; build source</td>
+</tr>
+<tr>
+<td><span class="badge b-yellow">Domain ch&#432;a c&#243; SSL</span></td>
+<td>Let's Encrypt c&#7847;n DNS tr&#7887; &#273;&#250;ng</td>
+<td>Tr&#7887; DNS v&#7873; server tr&#432;&#7899;c, b&#7853;t HTTPS sau</td>
+</tr>
+<tr>
+<td><span class="badge b-red">compose_*.yaml not found</span></td>
+<td>Compose c&#243; <code>include:</code> directive</td>
+<td>&#272;&#227; auto-fix: Phase 31 detect include &rarr; clone full repo</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- CHECKLIST -->
+<div class="sec" id="checklist">
+<h2>&#9989; Checklist tr&#432;&#7899;c khi deploy</h2>
+
+<div class="step">
+<div class="step-header">
+<div class="step-title">&#9989; Tr&#432;&#7899;c khi b&#7845;m Deploy</div>
+</div>
+<table>
+<tbody>
+<tr><td>&#9744;</td><td>Repo GitHub ti&#7871;p c&#7853;n &#273;&#432;&#7907;c (public ho&#7863;c provider &#273;&#227; k&#7871;t n&#7889;i)</td></tr>
+<tr><td>&#9744;</td><td>Domain g&#7889;c &#273;&#227; nh&#7853;p ho&#7863;c b&#7845;m "T&#7841;o t&#7921; &#273;&#7897;ng"</td></tr>
+<tr><td>&#9744;</td><td>Xem tr&#432;&#7899;c Docker Compose (n&#7871;u c&#243;) &rarr; kh&#244;ng c&#243; l&#7895;i c&#250; ph&#225;p</td></tr>
+<tr><td>&#9744;</td><td>&#272;&#227; ch&#7885;n &#273;&#250;ng <strong>Docker Image</strong> / <strong>Build from source</strong> (n&#7871;u well-known)</td></tr>
+<tr><td>&#9744;</td><td>Ki&#7875;m tra env vars ch&#7845;p nh&#7853;n &#273;&#432;&#7907;c (external API keys c&#243; th&#7875; nh&#7853;p sau)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="step">
+<div class="step-header">
+<div class="step-title">&#128259; Sau khi deploy</div>
+</div>
+<table>
+<tbody>
+<tr><td>&#9744;</td><td>Check tab <strong>Nh&#7853;t k&#253;</strong> &rarr; kh&#244;ng c&#243; error lặp l&#7841;i</td></tr>
+<tr><td>&#9744;</td><td>Truy c&#7853;p domain &rarr; app response &#273;&#250;ng</td></tr>
+<tr><td>&#9744;</td><td>N&#7871;u c&#243; env external (API keys) &rarr; v&#224;o M&#244;i tr&#432;&#7901;ng nh&#7853;p</td></tr>
+<tr><td>&#9744;</td><td>B&#7853;t HTTPS sau khi DNS tr&#7887; &#273;&#7871;n (Tab T&#234;n mi&#7873;n)</td></tr>
+<tr><td>&#9744;</td><td>(N&#7871;u c&#243;) Setup backup cho database</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+<strong>AI Auto Deploy</strong> &mdash; Dokploy v3.0 &mdash; 32 Phases &mdash; 14/04/2026<br>
+<span style="opacity:.6;">H&#432;&#7899;ng d&#7851;n n&#224;y ph&#249; h&#7907;p cho c&#7843; member l&#7851;n owner &bull; Ti&#7871;ng Vi&#7879;t</span>
+</div>
+
+</body>
+</html>
